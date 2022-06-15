@@ -33,9 +33,11 @@ public class MysqlModule {
         this.userID = builder.userID;
         this.userPassword = builder.userPassword;
         this.databaseUrl = builder.databaseUrl;
+        this.dbName = builder.dbName;
+
         this.charEncoding = builder.charEncoding;
         this.dbPort = builder.dbPort;
-        this.dbName = builder.dbName;
+
         this.baseSplitChar = builder.baseSplitChar;
     }
 
