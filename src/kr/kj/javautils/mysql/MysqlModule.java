@@ -22,6 +22,8 @@ public class MysqlModule {
     private String dbPort;
     private String charEncoding;
 
+    private String baseSplitChar;
+
     // member
     private Connection conn; // DB 커넥션 연결 객체
     private Statement state;
@@ -34,10 +36,11 @@ public class MysqlModule {
         this.charEncoding = builder.charEncoding;
         this.dbPort = builder.dbPort;
         this.dbName = builder.dbName;
+        this.baseSplitChar = builder.baseSplitChar;
     }
 
 
-    public ArrayList<String> runQuery(String query, ArrayList<String> keySet){
+    public ArrayList<String> runQuery(String query, ArrayList<String> keySet, String splitChar){
         if(conn == null && state == null) return null;
         ArrayList<String> resultList = new ArrayList<String>();
 
@@ -52,7 +55,7 @@ public class MysqlModule {
             for (int i = 1; i <= columnCount; i++)
                 keySet.add(rsmd.getColumnName(i));
 
-            PyString ps = new PyString(",");
+            PyString ps = new PyString(splitChar);
             while(rs.next()) {
                 ArrayList<String> items = new ArrayList<String>();
 
@@ -69,8 +72,12 @@ public class MysqlModule {
         return resultList;
     }
 
-    public ArrayList<String> runQuery(String query){ return runQuery(query, null); }
-
+    public ArrayList<String> runQuery(String query){
+        return runQuery(query, null, baseSplitChar);
+    }
+    public ArrayList<String> runQuery(String query, ArrayList<String> keySet){
+        return runQuery(query, keySet, baseSplitChar);
+    }
 
     public void connect() {
         Properties props = new Properties();
@@ -119,6 +126,7 @@ public class MysqlModule {
         // optional params;
         private String dbPort = "3306";
         private String charEncoding;
+        private String baseSplitChar = ",";
 
         public Builder(String userID, String userPassword,
                        String databaseUrl, String dbName) {
@@ -135,6 +143,11 @@ public class MysqlModule {
 
         public Builder setCharEncoding(String charEncoding) {
             this.charEncoding = charEncoding;
+            return this;
+        }
+
+        public Builder setBaseSplitChar(String baseSplitChar){
+            this.baseSplitChar = baseSplitChar;
             return this;
         }
 
