@@ -29,7 +29,7 @@ public class MysqlModule {
     private Statement state;
 
 
-    public MysqlModule(Builder builder) {
+    public MysqlModule(MysqlBuilder builder) {
         this.userID = builder.userID;
         this.userPassword = builder.userPassword;
         this.databaseUrl = builder.databaseUrl;
@@ -42,11 +42,22 @@ public class MysqlModule {
     }
 
 
+    /**
+     * Execute query and get result split by given splitChar
+     * Data fields are saved in given KeySet
+     *
+     * @param query
+     * @param keySet
+     * @param splitChar
+     * @return result array list of string, or null if some error occurs
+     */
     public ArrayList<String> runQuery(String query, ArrayList<String> keySet, String splitChar){
         if(conn == null && state == null) return null;
-        ArrayList<String> resultList = new ArrayList<String>();
+        ArrayList<String> resultList = null;
 
         try {
+            resultList = new ArrayList<String>();
+
             ResultSet rs = state.executeQuery(query);
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -118,7 +129,7 @@ public class MysqlModule {
     }
 
 
-    public static class Builder {
+    public static class MysqlBuilder {
         // required params;
         private String userID;
         private String userPassword;
@@ -130,25 +141,25 @@ public class MysqlModule {
         private String charEncoding;
         private String baseSplitChar = ",";
 
-        public Builder(String userID, String userPassword,
-                       String databaseUrl, String dbName) {
+        public MysqlBuilder(String userID, String userPassword,
+                            String databaseUrl, String dbName) {
             this.userID = userID;
             this.userPassword = userPassword;
             this.databaseUrl = databaseUrl;
             this.dbName = dbName;
         }
 
-        public Builder setDatabasePort(String dbPort) {
+        public MysqlBuilder setDatabasePort(String dbPort) {
             this.dbPort = dbPort;
             return this;
         }
 
-        public Builder setCharEncoding(String charEncoding) {
+        public MysqlBuilder setCharEncoding(String charEncoding) {
             this.charEncoding = charEncoding;
             return this;
         }
 
-        public Builder setBaseSplitChar(String baseSplitChar){
+        public MysqlBuilder setBaseSplitChar(String baseSplitChar){
             this.baseSplitChar = baseSplitChar;
             return this;
         }
